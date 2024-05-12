@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const app = express();
 const port = 3000;
+const cors = require('cors');
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/NewNiranjan', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost:27017/crm')
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
 
@@ -18,7 +19,7 @@ const userSchema = new mongoose.Schema({
 
 // Create User model
 const User = mongoose.model('User', userSchema);
-
+app.use(cors());
 app.use(express.json());
 
 // Register endpoint
@@ -63,7 +64,7 @@ app.post('/login', async (req, res) => {
     }
 
     // Check if the password is correct
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Invalid password' });
     }
